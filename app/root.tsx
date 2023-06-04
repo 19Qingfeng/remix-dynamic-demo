@@ -1,31 +1,43 @@
-import { cssBundleHref } from "@remix-run/css-bundle";
-import type { LinksFunction } from "@remix-run/node";
+import { cssBundleHref } from '@remix-run/css-bundle';
+import type { LinksFunction, LoaderFunction } from '@remix-run/node';
 import {
-  Links,
+  // Links,
   LiveReload,
   Meta,
   Outlet,
-  Scripts,
+  // Scripts,
   ScrollRestoration,
-} from "@remix-run/react";
+  useLoaderData,
+} from '@remix-run/react';
+import { Scripts } from '~/components/Scripts';
+import { Links } from '~/components/Links';
 
 export const links: LinksFunction = () => [
-  ...(cssBundleHref ? [{ rel: "stylesheet", href: cssBundleHref }] : []),
+  ...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
 ];
 
+export const loader: LoaderFunction = ({ request, context }) => {
+  // form express's getLoadContext
+  return {
+    dynamicHost: context?.dynamicHost,
+  };
+};
+
 export default function App() {
+  const { dynamicHost } = useLoaderData();
+
   return (
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
-        <Links />
+        <Links prefix={dynamicHost} />
       </head>
       <body>
         <Outlet />
         <ScrollRestoration />
-        <Scripts />
+        <Scripts prefix={dynamicHost} />
         <LiveReload />
       </body>
     </html>
